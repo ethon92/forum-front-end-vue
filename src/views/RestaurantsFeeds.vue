@@ -7,13 +7,14 @@
     <hr>
     <div class="row">
       <div class="col-md-6">
-        <h3>最新餐廳</h3>
         <!-- 最新餐廳 NewestRestaurants -->
+        <h3>最新餐廳</h3>
         <NewestRestaurants :restaurants="restaurants" />
       </div>
       <div class="col-md-6">
         <!-- 最新評論 NewestComments-->
         <h3>最新評論</h3>
+        <NewestComments :comments="comments" />
       </div>
     </div>
   </div>
@@ -23,6 +24,7 @@
 // 載入NavTabs component
 import NavTabs from '../components/NavTabs.vue'
 import NewestRestaurants from '../components/NewestRestaurants.vue'
+import NewestComments from '../components/NewestComments.vue';
 
 // 建立假的API資料
 const dummyData = {
@@ -535,7 +537,8 @@ const dummyData = {
 export default {
   components: {
     NavTabs,
-    NewestRestaurants
+    NewestRestaurants,
+    NewestComments
   },
   // 初始資料
   data() {
@@ -551,7 +554,7 @@ export default {
     // 將API資料放入data
     fetchFeeds() {
       this.restaurants = dummyData.restaurants
-      this.comments = dummyData.comments
+      this.comments = dummyData.comments.filter( comment => comment.Restaurant && comment.text )
     }
   }
 }
