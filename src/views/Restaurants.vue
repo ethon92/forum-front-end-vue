@@ -1,14 +1,17 @@
 <template>
   <div class="container py-5">
     <NavTabs />
+
     <!-- 餐廳類別標籤 RestaurantsNavPills -->
     <RestaurantsNavPills :categories="categories"/>
+
     <div class="row">
       <!-- 餐廳卡片 RestaurantCard-->
       <RestaurantCard v-for="restaurant in restaurants" :key="restaurant.id" :initial-restaurant="restaurant"/>
     </div>
 
     <!-- 分頁標籤 RestaurantPagination -->
+    <RestaurantsPagination v-if="totalPage.length > 1" :category-id="categoryId" :current-page="currentPage" :total-page="totalPage" :previous-page="previousPage" :next-page="nextPage"/>
   </div>
 </template>
 
@@ -17,7 +20,10 @@
 import NavTabs from '../components/NavTabs.vue'
 // 載入RestaurantCard component
 import RestaurantCard from '../components/RestaurantCard.vue'
+// 載入RestaurantsNavPills component
 import RestaurantsNavPills from '../components/RestaurantsNavPills.vue'
+// 載入RestaurantsPagination component
+import RestaurantsPagination from '../components/RestaurantsPagination.vue'
 
 const dummyData = {
     "restaurants": [
@@ -293,7 +299,8 @@ export default {
   components: {
     NavTabs,
     RestaurantCard,
-    RestaurantsNavPills
+    RestaurantsNavPills,
+    RestaurantsPagination
   },
   // 設定初始資料
   data() {
