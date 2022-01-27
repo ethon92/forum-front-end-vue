@@ -25,6 +25,8 @@ import RestaurantsNavPills from '../components/RestaurantsNavPills.vue'
 // 載入RestaurantsPagination component
 import RestaurantsPagination from '../components/RestaurantsPagination.vue'
 
+
+
 const dummyData = {
     "restaurants": [
         {
@@ -301,7 +303,7 @@ export default {
     NavTabs,
     RestaurantCard,
     RestaurantsNavPills,
-    RestaurantsPagination
+    RestaurantsPagination,
   },
   // 設定初始資料
   data() {

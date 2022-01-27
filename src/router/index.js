@@ -43,6 +43,12 @@ const routes = [
     name: 'restaurants-tops',
     component: () => import('../views/RestaurantsTop')
   },
+  // 建立動態路由，由於是路由是由上往下匹配，若將動態路由往上擺，則會造成'/restaurants'後方接的路由都會進到動態路由中
+  {
+    path: '/restaurants/:id',
+    name: 'restaurant',
+    component: () => import('../views/Restaurant')
+  },
   // 建立美食達人的路由
   {
     path: '/users/tops',
