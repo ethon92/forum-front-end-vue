@@ -1,16 +1,21 @@
 <template>
   <div class="container py-5">
     <h1>餐廳描述頁</h1>
+
     <!-- 餐廳資訊頁 RestaurantDetail -->
     <RestaurantDetail :initial-restaurant="restaurant"/>
     <hr>
+
     <!-- 餐廳評論 RestaurantComments -->
+    <RestaurantComments :restaurant-comments="restaurantComments"/>
+
     <!-- 新增評論 CreateComment -->
   </div>
 </template>
 
 <script>
 import RestaurantDetail from '../components/RestaurantDetail.vue'
+import RestaurantComments from '../components/RestaurantComments.vue'
 
 // 模擬API的資料
 const dummyData = {
@@ -99,6 +104,7 @@ export default {
   name: "Restaurant",
   components: {
     RestaurantDetail,
+    RestaurantComments,
   },
   // 建立restaurant資料
   data() {

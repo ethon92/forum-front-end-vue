@@ -17,20 +17,10 @@
 </template>
 
 <script>
-// 載入moment套件
-import moment from "moment";
+// 載入mixins
+import { fromNowFilter } from '../utils/mixins'
 export default {
-  filters: {
-    fromNow(datetime) {
-      // 如果沒有時間回傳'-'
-      if (!datetime) {
-        return '-'
-      }
-
-      // 利用moment中的fromNow函式回傳距今的多久時間
-      return moment(datetime).fromNow()
-    }
-  },
+  mixins: [fromNowFilter],
   props: {
     restaurants: {
       type: Array,

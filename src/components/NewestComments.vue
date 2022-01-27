@@ -23,20 +23,11 @@
 </template>
 
 <script>
-// 載入moment套件
-import moment from "moment";
-export default {
-  filters: {
-    fromNow(datetime) {
-      // 如果沒有時間則回傳'-'
-      if(!datetime) {
-        return '-'
-      }
+// 載入mixins
+import { fromNowFilter } from '../utils/mixins'
 
-      // 利用moment中的fromNow函式回傳距離現在多久的時間
-      return moment(datetime).fromNow()
-    }
-  },
+export default {
+  mixins: [fromNowFilter],
   props: {
     comments: {
       type: Array,
