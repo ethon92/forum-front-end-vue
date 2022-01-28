@@ -9,17 +9,43 @@
     </h1>
     <hr>
 
-     <div class="row text-center">
-      <!-- 載入人物卡片 -->
-      <UsersTopCard  v-for="user in users" :key="user.id" :initial-user="user"/>
-     </div>
+    <div class="row text-center">
+      <div class="col-3" v-for="user in users" :key="user.id">
+        <a href="#">
+          <img
+            :src="user.image"
+            width="140px"
+            height="140px"
+          >
+        </a>
+        <h2>User</h2>
+        <span class="badge badge-secondary">追蹤人數： {{ user.FollowerCount }}</span>
+        <p class="mt-3">
+          <button
+            v-if="user.isFollowed"
+            @click.prevent.stop="deleteFollow(user.id)"
+            type="button"
+            class="btn btn-danger"
+          >
+            取消追蹤
+          </button>
+          <button
+            v-else
+            @click.prevent.stop="addFollow(user.id)"
+            type="button"
+            class="btn btn-primary"
+          >
+            追蹤
+          </button>
+        </p>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 // 載入NavTabs component
 import NavTabs from '../components/NavTabs.vue'
-import UsersTopCard from '../components/UsersTopCard.vue'
 
 // 模擬向API索取之後的資料
 const dummyData = {
@@ -69,8 +95,7 @@ const dummyData = {
 export default {
   name: 'UsersTop',
   components: {
-    NavTabs,
-    UsersTopCard
+    NavTabs
   },
   data() {
     return {
@@ -85,6 +110,14 @@ export default {
     // 向API索取資料的函式
     fetchUser() {
       this.users = dummyData.users
+    },
+    // 加入追蹤函式
+    addFollow(id) {
+      this.users.filter( user => user.id === id )[0].isFollowed = true
+    },
+    // 退出追蹤函式
+    deleteFollow(id) {
+      this.users.filter( user => user.id === id )[0].isFollowed = false
     }
   }
 }
