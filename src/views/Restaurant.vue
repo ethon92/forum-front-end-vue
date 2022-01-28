@@ -7,17 +7,17 @@
     <hr>
 
     <!-- 餐廳評論 RestaurantComments -->
-    <RestaurantComments :restaurant-comments="restaurantComments"
-    @after-delete-comment="afterDeleteComment"
-    />
+    <RestaurantComments :restaurant-comments="restaurantComments" @after-delete-comment="afterDeleteComment" />
 
     <!-- 新增評論 CreateComment -->
+    <CreateComment :restaurant-id="restaurant.id" @after-create-comment="afterCreateComment" />
   </div>
 </template>
 
 <script>
 import RestaurantDetail from '../components/RestaurantDetail.vue'
 import RestaurantComments from '../components/RestaurantComments.vue'
+import CreateComment from '../components/CreateComment.vue'
 
 // 模擬API的資料
 const dummyData = {
@@ -102,11 +102,24 @@ const dummyData = {
     "isLiked": false
 }
 
+// 模擬使用者登入時
+const dummyUser = {
+  currentUser: {
+    "id": 1,
+    "name": "root",
+    "email": "root@example.com",
+    "image": null,
+    "isAdmin": true
+  },
+  isAuthenticated: true
+}
+
 export default {
   name: "Restaurant",
   components: {
     RestaurantDetail,
     RestaurantComments,
+    CreateComment
   },
   // 建立restaurant資料
   data() {
@@ -123,7 +136,8 @@ export default {
         isFavorited: false,
         isLiked: false
       },
-      restaurantComments: []
+      restaurantComments: [],
+      currentUser: dummyUser.currentUser
     }
   },
   created() {
@@ -133,7 +147,7 @@ export default {
   methods: {
     // 向API索取資料的函式
     fetchRestaurant(restaurantId) {
-      console.log('fetchRestaurant id: ', restaurantId)
+      console.log('fetchRestaurant', restaurantId)
       const { restaurant, isFavorited, isLiked } = dummyData
       const { id, name, Category, image, opening_hours, tel, address, description, Comments } = restaurant
 
@@ -155,6 +169,22 @@ export default {
     afterDeleteComment(commentId) {
       // 利用filter刪除點擊到的comment
       this.restaurantComments = this.restaurantComments.filter( comment => comment.id !== commentId)
+    },
+    afterCreateComment(payload) {
+      // 將資料解構賦值取出
+      const { commentId, restaurantId, text } = payload
+
+      // 再將資料放入restaurantComments陣列中
+      this.restaurantComments.push({
+        id: commentId,
+        RestaurantId: restaurantId,
+        User: {
+          id: this.currentUser.id,
+          name: this.currentUser.name
+        },
+        text,
+        createdAt: new Date()
+      })
     }
   }
 }
