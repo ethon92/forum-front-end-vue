@@ -7,7 +7,9 @@
     <hr>
 
     <!-- 餐廳評論 RestaurantComments -->
-    <RestaurantComments :restaurant-comments="restaurantComments"/>
+    <RestaurantComments :restaurant-comments="restaurantComments"
+    @after-delete-comment="afterDeleteComment"
+    />
 
     <!-- 新增評論 CreateComment -->
   </div>
@@ -149,6 +151,10 @@ export default {
       }
 
       this.restaurantComments = Comments
+    },
+    afterDeleteComment(commentId) {
+      // 利用filter刪除點擊到的comment
+      this.restaurantComments = this.restaurantComments.filter( comment => comment.id !== commentId)
     }
   }
 }

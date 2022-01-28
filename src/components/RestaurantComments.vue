@@ -8,6 +8,7 @@
       <blockquote class="blockquote mb-0">
         <button
           v-if="currentUser.isAdmin"
+          @click.prevent.stop="handleDeleteButtonClick(comment.id)"
           type="button"
           class="btn btn-danger float-right"
         >
@@ -55,6 +56,14 @@ export default {
   data() {
     return {
       currentUser: dummyData.currentUser
+    }
+  },
+  methods: {
+    handleDeleteButtonClick(commentId) {    
+      // 向API傳送刪除comment的訊息
+
+      // 利用'$emit'將事件從子元件傳遞到父元件
+      this.$emit('after-delete-comment', commentId)
     }
   }
 }
