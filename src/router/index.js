@@ -2,7 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import NotFound from '../views/NotFound.vue'
 import SignIn from '../views/SignIn.vue'
-import Restaurants from '../views/Restaurants'
+import Restaurants from '../views/Restaurants.vue'
 
 Vue.use(VueRouter)
 
@@ -35,25 +35,30 @@ const routes = [
   {
     path: '/restaurants/feeds',
     name: 'restaurants-feeds',
-    component: () => import('../views/RestaurantsFeeds')
+    component: () => import('../views/RestaurantsFeeds.vue')
   },
   // 建立人氣餐廳的路由
   {
     path: '/restaurants/tops',
     name: 'restaurants-tops',
-    component: () => import('../views/RestaurantsTop')
+    component: () => import('../views/RestaurantsTop.vue')
   },
   // 建立動態路由，由於是路由是由上往下匹配，若將動態路由往上擺，則會造成'/restaurants'後方接的路由都會進到動態路由中
   {
     path: '/restaurants/:id',
     name: 'restaurant',
-    component: () => import('../views/Restaurant')
+    component: () => import('../views/Restaurant.vue')
+  },
+  {
+    path: '/restaurants/:id/dashboard',
+    name: 'restaurant-dashboard',
+    component: () => import('../views/RestaurantDashboard.vue')
   },
   // 建立美食達人的路由
   {
     path: '/users/tops',
     name: 'users-tops',
-    component: () => import('../views/UsersTop')
+    component: () => import('../views/UsersTop.vue')
   },
   // 由於路由是由上往下匹配，所以只要上方都匹配不到路由就會進到not-found
   // 則將not-found路由放在最後一個，並且path是放入"*"(萬用字元)
