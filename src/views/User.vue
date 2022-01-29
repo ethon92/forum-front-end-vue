@@ -27,6 +27,7 @@ import UserFollowersCard from '../components/UserFollowersCard.vue'
 import UserCommentsCard from '../components/UserCommentsCard.vue'
 import UserFavoritedRestaurantsCard from '../components/UserFavoritedRestaurantsCard.vue'
 
+// 模擬向API索取的資料
 const dummyData = {
   name: 'User',
   'profile': {
@@ -1203,7 +1204,20 @@ const dummyData = {
   'isFollowed': false
 }
 
+// 模擬使用者登入時
+const dummyUser = {
+  currentUser: {
+    "id": 1,
+    "name": "root",
+    "email": "root@example.com",
+    "image": null,
+    "isAdmin": true
+  },
+  isAuthenticated: true
+}
+
 export default {
+  name: 'User',
   components: {
     UserProfileCard,
     UserFollowingsCard,
@@ -1224,6 +1238,8 @@ export default {
       favoritedRestaurants: [],
       followings: [],
       followers: [],
+      currentUser: dummyUser.currentUser,
+      currentUserIsAuthenticated: dummyUser.isAuthenticated
     }
   },
   created() {
@@ -1244,7 +1260,12 @@ export default {
         favoritedRestaurantsCount: FavoritedRestaurants.length,
         followings: Followings.length,
         followers: Followers.length,
-        isFollowed
+        isFollowed,
+        user: {
+          id: this.currentUser.id,
+          name: this.currentUser.name,
+          isAuthenticated: this.currentUserIsAuthenticated
+        }
       }
 
       this.followings = Followings

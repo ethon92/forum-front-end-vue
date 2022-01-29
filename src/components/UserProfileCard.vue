@@ -16,8 +16,11 @@
             <li><strong>{{ userProfile.followings }}</strong> followings (追蹤者)</li>
             <li><strong>{{ userProfile.followers }}</strong> followers (追隨者)</li>
           </ul>
-          <button v-if="userProfile.isFollowed" @click="switchFollowedValue(false)" type="submit" class="btn btn-danger">取消追蹤</button>
-          <button v-else type="submit" @click="switchFollowedValue(true)" class="btn btn-primary">追蹤</button>
+          <button v-if="userProfile.user.isAuthenticated" type="submit" class="btn btn-success">Edit</button>
+          <template v-else>
+            <button v-if="userProfile.isFollowed" @click="switchFollowedValue(false)" type="submit" class="btn btn-danger">取消追蹤</button>
+            <button v-else type="submit" @click="switchFollowedValue(true)" class="btn btn-primary">追蹤</button>
+          </template>
         </div>
       </div>
     </div>
