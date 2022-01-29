@@ -57,8 +57,13 @@ const routes = [
   // 建立美食達人的路由
   {
     path: '/users/tops',
-    name: 'users-tops',
+    name: 'users-top',
     component: () => import('../views/UsersTop.vue')
+  },
+  {
+    path: '/users/:id',
+    name: 'user',
+    component: () => import('../views/User.vue')
   },
   // 由於路由是由上往下匹配，所以只要上方都匹配不到路由就會進到not-found
   // 則將not-found路由放在最後一個，並且path是放入"*"(萬用字元)
