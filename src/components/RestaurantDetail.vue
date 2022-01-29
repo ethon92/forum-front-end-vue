@@ -38,7 +38,7 @@
 
       <button
         v-if="restaurant.isFavorited"
-        @click.prevent.stop="setTrueFalse('isFavorited', false)"
+        @click.prevent.stop="switchFavoriteOrLikeValue('isFavorited', false)"
         type="button"
         class="btn btn-danger btn-border mr-2"
       >
@@ -46,7 +46,7 @@
       </button>
       <button
         v-else
-        @click.prevent.stop="setTrueFalse('isFavorited', true)"
+        @click.prevent.stop="switchFavoriteOrLikeValue('isFavorited', true)"
         type="button"
         class="btn btn-primary btn-border mr-2"
       >
@@ -54,7 +54,7 @@
       </button>
       <button
         v-if="restaurant.isLiked"
-        @click.prevent.stop="setTrueFalse('isLiked', false)"
+        @click.prevent.stop="switchFavoriteOrLikeValue('isLiked', false)"
         type="button"
         class="btn btn-danger like mr-2"
       >
@@ -62,7 +62,7 @@
       </button>
       <button
         v-else
-        @click.prevent.stop="setTrueFalse('isLiked', true)"
+        @click.prevent.stop="switchFavoriteOrLikeValue('isLiked', true)"
         type="button"
         class="btn btn-primary like mr-2"
       >
@@ -87,7 +87,7 @@ export default {
   },
   methods: {
     // 代入isFavorited/isLiked切換不同項目去做按鈕的切換
-    setTrueFalse(item, value) {
+    switchFavoriteOrLikeValue(item, value) {
       this.restaurant[item] = value
     },
     // addFavorite() {
