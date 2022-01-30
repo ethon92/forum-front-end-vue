@@ -44,6 +44,7 @@
 </template>
 
 <script>
+// 從mixins載入emptyImageFilter
 import { emptyImageFilter } from '../utils/mixins'
 
 // 模擬向API抓取的資料

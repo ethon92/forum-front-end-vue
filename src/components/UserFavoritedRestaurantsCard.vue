@@ -6,7 +6,7 @@
     <div class="d-flex">
       <div class="p-1" v-for="favoritedRestaurant in favoritedRestaurants" :key="favoritedRestaurant.id">
       <router-link :to="{ name: 'restaurant', params: { id: favoritedRestaurant.id }}">
-        <img :src="favoritedRestaurant.image" width="60" height="60" class="avatar">
+        <img :src="favoritedRestaurant.image | emptyImage" width="60" height="60" class="avatar">
       </router-link>
     </div>
     </div>
@@ -14,7 +14,11 @@
 </template>
 
 <script>
+// 從mixins載入emptyImageFilter
+import { emptyImageFilter } from '../utils/mixins'
+
 export default {
+  mixins: [emptyImageFilter],
   props: {
     favoritedRestaurants: {
       type: Array,

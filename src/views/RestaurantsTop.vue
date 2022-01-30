@@ -16,7 +16,7 @@
           <a href="#">
             <img
               class="card-img"
-              :src="restaurant.image"
+              :src="restaurant.image | emptyImage"
             >
           </a>
         </div>
@@ -60,6 +60,8 @@
 <script>
 // 載入NavTabs component
 import NavTabs from '../components/NavTabs.vue'
+// 從mixins載入emptyImageFilter
+import { emptyImageFilter } from '../utils/mixins'
 
 const dummyData = {
     "restaurants": [
@@ -229,6 +231,7 @@ const dummyData = {
 
 export default {
   name: 'RestaurantsTop',
+  mixins: [emptyImageFilter],
   components: {
     NavTabs,
     // RestaurantsTopCard

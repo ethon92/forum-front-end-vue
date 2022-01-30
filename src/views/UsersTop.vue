@@ -13,7 +13,7 @@
       <div class="col-3" v-for="user in users" :key="user.id">
         <a href="#">
           <img
-            :src="user.image"
+            :src="user.image | emptyImage"
             width="140px"
             height="140px"
           >
@@ -46,6 +46,8 @@
 <script>
 // 載入NavTabs component
 import NavTabs from '../components/NavTabs.vue'
+// 從mixins載入emptyImageFilter
+import { emptyImageFilter } from '../utils/mixins'
 
 // 模擬向API索取之後的資料
 const dummyData = {
@@ -94,6 +96,7 @@ const dummyData = {
 
 export default {
   name: 'UsersTop',
+  mixins: [emptyImageFilter],
   components: {
     NavTabs
   },
