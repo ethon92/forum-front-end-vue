@@ -43,6 +43,7 @@
           <button
             type="button"
             class="btn btn-link"
+            @click.prevent.stop="deleteRestaurants(restaurant.id)"
           >
             Delete
           </button>
@@ -1025,6 +1026,9 @@ export default {
       // TODO: 向API抓取adminRestaurants的資料
 
       this.restaurants = dummyData.restaurants
+    },
+    deleteRestaurants(restaurantId) {
+        this.restaurants = this.restaurants.filter( restaurant => restaurant.id !== restaurantId )
     }
   }
 }
