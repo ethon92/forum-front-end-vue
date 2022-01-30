@@ -247,7 +247,6 @@ export default {
       // TODO: 向API索取人氣餐廳資料
 
       this.restaurants = dummyData.restaurants
-      // console.log(this.restaurants)
     },
     addFavorite(id) {
       this.restaurants.filter( restaurant => restaurant.id === id )[0].isFavorited = true

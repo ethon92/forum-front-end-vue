@@ -79,6 +79,12 @@ const routes = [
     name: 'admin',
     component: () => import('../views/AdminRestaurants.vue')
   },
+  // 建立admin各個restaurant的路由
+  {
+    path: '/admin/restaurants/:id',
+    name: 'admin-restaurant',
+    component: () => import('../views/AdminRestaurant.vue')
+  },
   // 由於路由是由上往下匹配，所以只要上方都匹配不到路由就會進到not-found
   // 則將not-found路由放在最後一個，並且path是放入"*"(萬用字元)
   {
