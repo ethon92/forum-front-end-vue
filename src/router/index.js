@@ -49,6 +49,7 @@ const routes = [
     name: 'restaurant',
     component: () => import('../views/Restaurant.vue')
   },
+  // 建立各個餐廳評論和瀏覽的次數頁面路由
   {
     path: '/restaurants/:id/dashboard',
     name: 'restaurant-dashboard',
@@ -60,10 +61,23 @@ const routes = [
     name: 'users-top',
     component: () => import('../views/UsersTop.vue')
   },
+  // 建立個人頁面的路由
   {
     path: '/users/:id',
     name: 'user',
     component: () => import('../views/User.vue')
+  },
+  // 建立只輸入'/admin'，轉址去'/admin/restaurants'
+  {
+    path: '/admin',
+    exact: true,
+    redirect: '/admin/restaurants'
+  },
+  // 建立admin的路由
+  {
+    path: '/admin/restaurants',
+    name: 'admin',
+    component: () => import('../views/AdminRestaurants.vue')
   },
   // 由於路由是由上往下匹配，所以只要上方都匹配不到路由就會進到not-found
   // 則將not-found路由放在最後一個，並且path是放入"*"(萬用字元)
