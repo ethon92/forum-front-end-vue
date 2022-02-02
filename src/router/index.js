@@ -84,6 +84,11 @@ const routes = [
     name: 'admin-restaurant-new',
     component: () => import('../views/AdminRestaurantNew.vue')
   },
+  {
+    path: '/admin/restaurants/:id/edit',
+    name: 'admin-restaurant-edit',
+    component: () => import('../views/AdminRestaurantEdit.vue')
+  },
   // 建立admin各個restaurant的路由
   {
     path: '/admin/restaurants/:id',

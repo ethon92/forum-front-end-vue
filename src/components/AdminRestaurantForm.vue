@@ -158,16 +158,26 @@ const dummyData = {
 }
 export default {
   name: 'AdminRestaurantForm',
-  data () {
-    return {
-      restaurant: {
+   props: {
+    initialRestaurant: {
+      type: Object,
+      default: () => ({
         name: '',
         categoryId: '',
         tel: '',
         address: '',
         description: '',
         image: '',
-        openingHours: ''
+        openingHours: '',
+      })
+    }
+  },
+  data () {
+    return {
+      // 當為edit的頁面時，initialRestaurant有值則放入restaurant中
+      // 若為new的頁面時，initialRestaurant為default值
+      restaurant: {
+        ...this.initialRestaurant
       },
       categories: []
     }
