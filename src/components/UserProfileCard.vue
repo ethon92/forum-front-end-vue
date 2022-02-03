@@ -17,9 +17,9 @@
             <li><strong>{{ userProfile.followers }}</strong> followers (追隨者)</li>
           </ul>
           <template v-if="userProfile.user.isAuthenticated">
-            <!-- <router-link :to="{ name: 'user', params: { id: userProfile.user.id }}"> -->
+            <router-link :to="{ name: 'user-edit', params: { id: userProfile.user.id }}">
               <button type="submit" class="btn btn-success">Edit</button>
-            <!-- </router-link> -->
+            </router-link>
           </template>
           <template v-else>
             <button v-if="userProfile.isFollowed" @click="switchFollowedValue(false)" type="submit" class="btn btn-danger">取消追蹤</button>

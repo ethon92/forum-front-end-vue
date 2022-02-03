@@ -192,7 +192,7 @@ export default {
     handleFileChange (e) {
       // 利用解構賦值將files選出
       const { files } = e.target
-
+      
       if (files.length === 0) {
         // 使用者沒有選擇上傳的檔案
         this.restaurant.image = ''

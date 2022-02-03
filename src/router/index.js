@@ -67,6 +67,11 @@ const routes = [
     name: 'user',
     component: () => import('../views/User.vue')
   },
+  {
+    path: '/users/:id/edit',
+    name: 'user-edit',
+    component: () => import('../views/UserEdit.vue')
+  },
   // 建立只輸入'/admin'，轉址去'/admin/restaurants'
   {
     path: '/admin',
@@ -79,11 +84,13 @@ const routes = [
     name: 'admin',
     component: () => import('../views/AdminRestaurants.vue')
   },
+  // 建立admin新增餐廳的路由
   {
     path: '/admin/restaurants/new',
     name: 'admin-restaurant-new',
     component: () => import('../views/AdminRestaurantNew.vue')
   },
+  // 建立admin修改餐廳的路由
   {
     path: '/admin/restaurants/:id/edit',
     name: 'admin-restaurant-edit',
