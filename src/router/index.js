@@ -90,6 +90,11 @@ const routes = [
     name: 'admin-categories',
     component: () => import('../views/AdminCategories.vue')
   },
+  {
+    path: '/admin/users',
+    name: 'admin-users',
+    component: () => import('../views/AdminUsers.vue')
+  },
   // 建立admin新增餐廳的路由
   {
     path: '/admin/restaurants/new',
