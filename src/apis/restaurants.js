@@ -15,5 +15,10 @@ export default {
       // 將token按照JWT規範以Bearer類別放在header屬性中
       headers: { Authorization: `Bearer ${getToken()}` }
     })
+  },
+  getRestaurantFeeds() {
+    return apiHelper.get('/restaurants/feeds', {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    })
   }
 }
