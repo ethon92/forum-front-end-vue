@@ -11,7 +11,7 @@ const routes = [
   {
     path: '/',
     name: 'root',
-    redirect: 'restaurants'
+    redirect: '/signin'
   },
   // 建立sign in的路由
   {

@@ -38,6 +38,7 @@
 
       <button
         class="btn btn-lg btn-primary btn-block mb-3"
+        :disabled="isProcessing"
         type="submit"
       >
         Submit
@@ -58,23 +59,69 @@
 </template>
 
 <script>
+// 載入authorizationAPI
+import authorizationAPI from '../apis/authorization'
+import { Toast } from '../utils/helpers'
+
 export default {
   // data要是函式的回傳值，vue才可進行控制
   data() {
     return {
       email: "",
-      password: ""
+      password: "",
+      isProcessing: false
     }
   },
   methods: {
-    handleSubmit() {
-      // 將email/password轉成JSON的格式
-      const data = JSON.stringify({
-        email: this.email,
-        password: this.password
-      })
+    async handleSubmit() {
+      try {
+        // 當使用者沒有輸入email和password時，顯示的訊息
+        if( !this.email || !this.password ) {
+          Toast.fire({
+            icon: 'warning',
+            title: '請輸入 email 和 password'
+          })
+          return
+        }
 
-      console.log('data', data)
+        // 當使用者點擊送出之後，無法再次點擊，直到伺服器回傳結果
+        // 即可避免因為使用者同時間點擊多次所導致的錯誤訊息
+        this.isProcessing = true
+
+        // 呼叫signin函式向後端API發送驗證使用者請求
+        const response = await authorizationAPI.signin({
+          email: this.email,
+          password: this.password
+        })
+
+        const { data } = response
+
+        // 當狀態不是success時，要丟出錯誤
+        if( data.status !== 'success') {
+          throw new Error(data.message)
+        }
+
+        // 如果驗證成功，將token儲存至localStorage中
+        localStorage.setItem('token', data.token)
+
+        // 將網頁轉至餐廳首頁
+        this.$router.push('/restaurants')
+      } catch(error) {
+        // 將密碼欄位清空
+        this.password = ''
+
+        // 由於登入失敗，將送出按鈕轉回可送出的狀態
+        this.isProcessing = false
+
+        // 利用Toast顯示錯誤提示
+        Toast.fire({
+          icon: 'warning',
+          title: '請確認您輸入了正確的帳號密碼'
+        })
+
+        // 顯示錯誤訊息
+        console.log('Error', error)
+      }
     }
   }
 }
