@@ -19,11 +19,11 @@
           >
         </a>
         <h2>User</h2>
-        <span class="badge badge-secondary">追蹤人數： {{ user.FollowerCount }}</span>
+        <span class="badge badge-secondary">追蹤人數： {{ user.followerCount }}</span>
         <p class="mt-3">
           <button
             v-if="user.isFollowed"
-            @click.prevent.stop="deleteFollow(user.id)"
+            @click.prevent.stop="deleteFollowing(user.id)"
             type="button"
             class="btn btn-danger"
           >
@@ -31,7 +31,7 @@
           </button>
           <button
             v-else
-            @click.prevent.stop="addFollow(user.id)"
+            @click.prevent.stop="addFollowing(user.id)"
             type="button"
             class="btn btn-primary"
           >
@@ -48,51 +48,8 @@
 import NavTabs from '../components/NavTabs.vue'
 // 從mixins載入emptyImageFilter
 import { emptyImageFilter } from '../utils/mixins'
-
-// 模擬向API索取之後的資料
-const dummyData = {
-    "users": [
-        {
-            "id": 1,
-            "name": "root",
-            "email": "root@example.com",
-            "password": "$2a$10$JQvqoUJFVaBalCiinUSTs.2J36IkrUcLdwIopXkGtpPDCp51HM4/G",
-            "isAdmin": true,
-            "image": "https://randomuser.me/api/portraits/women/21.jpg",
-            "createdAt": "2022-01-23T10:09:29.000Z",
-            "updatedAt": "2022-01-23T10:09:29.000Z",
-            "Followers": [],
-            "FollowerCount": 456,
-            "isFollowed": false
-        },
-        {
-            "id": 2,
-            "name": "user1",
-            "email": "user1@example.com",
-            "password": "$2a$10$qjW2eJJ5XZSlDB7NCbjur.m6/vbT3SSPoc8L837FpwuswCMcHiTBS",
-            "isAdmin": false,
-            "image": "https://randomuser.me/api/portraits/women/28.jpg",
-            "createdAt": "2022-01-23T10:09:30.000Z",
-            "updatedAt": "2022-01-23T10:09:30.000Z",
-            "Followers": [],
-            "FollowerCount": 345,
-            "isFollowed": false
-        },
-        {
-            "id": 3,
-            "name": "user2",
-            "email": "user2@example.com",
-            "password": "$2a$10$sUV3bR9SnXW8KIPpMVFQG.cwCvmS.HJ/Pf//MHGl7RDh2tVgby3tW",
-            "isAdmin": false,
-            "image": "https://randomuser.me/api/portraits/women/73.jpg",
-            "createdAt": "2022-01-23T10:09:30.000Z",
-            "updatedAt": "2022-01-23T10:09:30.000Z",
-            "Followers": [],
-            "FollowerCount": 999,
-            "isFollowed": false
-        }
-    ]
-}
+import usersAPI from '../apis/users'
+import { Toast } from '../utils/helpers'
 
 export default {
   name: 'UsersTop',
@@ -107,20 +64,91 @@ export default {
     }
   },
   created() {
-    this.fetchUser()
+    this.fetchTopUsers()
   },
   methods: {
-    // 向API索取資料的函式
-    fetchUser() {
-      this.users = dummyData.users
+    // 向伺服器取得美食達人的函式
+    async fetchTopUsers() {
+      try {
+        const { data } = await usersAPI.getTopUsers()
+
+        // 將data中users的資料放入vue的users中
+        this.users = data.users.map( user => {
+          return {
+            ...user,
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            image: user.image,
+            followerCount: user.FollowerCount,
+            isFollowed: user.isFollowed
+          }
+        })
+      } catch(error) {
+        console.log('error', error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法取得美食達人，請稍後再試'
+        })
+      }
     },
     // 加入追蹤函式
-    addFollow(id) {
-      this.users.filter( user => user.id === id )[0].isFollowed = true
+    async addFollowing(userId) {
+      try {
+        // 將data解構賦值取出
+        const { data } = await usersAPI.addFollowing({ userId })
+
+        // 當data的狀態不是success時，顯示錯誤在dev tool中
+        if (data.status !== 'success') {
+          throw new Error('data.message')
+        }
+
+        // 將所有users取出並當userId相同時，追蹤人數加一/追蹤狀態轉成true
+        this.users = this.users.map(user => {
+          if (user.id !== userId) {
+            return user
+          } else {
+            return {
+              ...user,
+              followerCount: user.followerCount + 1,
+              isFollowed: true
+            }
+          }
+        })
+      } catch(error) {
+        Toast.fire({
+          icon: 'error',
+          title: '無法加入追蹤，請稍後再試'
+        })
+      }
     },
-    // 退出追蹤函式
-    deleteFollow(id) {
-      this.users.filter( user => user.id === id )[0].isFollowed = false
+    // 取消追蹤函式
+    async deleteFollowing(userId) {
+      try {
+        const { data } = await usersAPI.deleteFollowing({ userId })
+
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+
+        // 將所有users取出並當userId相同時，追蹤人數減一/追蹤狀態轉成false
+        this.users = this.users.map(user => {
+          if (user.id !== userId) {
+            return user
+          } else {
+            return {
+              ...user,
+              followerCount: user.followerCount - 1,
+              isFollowed: false
+            }
+          }
+        })
+      } catch(error) {
+        Toast.fire({
+          icon: 'error',
+          title: '無法取消追蹤，請稍後再試'
+        })
+      }
     }
   }
 }
