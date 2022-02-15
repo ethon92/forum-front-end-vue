@@ -63,6 +63,7 @@ import NavTabs from '../components/NavTabs.vue'
 // 從mixins載入emptyImageFilter
 import { emptyImageFilter } from '../utils/mixins'
 import restaurantAPI from '../apis/restaurants'
+import usersAPI from '../apis/users'
 import { Toast } from '../utils/helpers'
 
 
@@ -113,7 +114,7 @@ export default {
     // 加入最愛的函式
     async addFavorite(restaurantId) {
       try {
-        const { data } = await restaurantAPI.addFavorite({ restaurantId })
+        const { data } = await usersAPI.addFavorite({ restaurantId })
 
         if (data.status !== 'success') {
           throw new Error(data.message)
@@ -141,7 +142,7 @@ export default {
     // 取消最愛的函式
     async deleteFavorite(restaurantId) {
       try {
-        const { data } = await restaurantAPI.deleteFavorite({ restaurantId })
+        const { data } = await usersAPI.deleteFavorite({ restaurantId })
 
         if (data.status !== 'success') {
           throw new Error(data.message)
