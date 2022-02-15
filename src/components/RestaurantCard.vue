@@ -24,7 +24,7 @@
       <div class="card-footer">
         <button
           v-if="restaurant.isFavorited"
-          @click.prevent.stop="deleteFavorite"
+          @click.prevent.stop="deleteFavorite(restaurant.id)"
           type="button"
           class="btn btn-danger btn-border favorite mr-2"
         >
@@ -32,7 +32,7 @@
         </button>
         <button
           v-else
-          @click.prevent.stop="addFavorite"
+          @click.prevent.stop="addFavorite(restaurant.id)"
           type="button"
           class="btn btn-primary btn-border favorite mr-2"
         >
@@ -40,7 +40,7 @@
         </button>
         <button
           v-if="restaurant.isLiked"
-          @click.prevent.stop="deleteLike"
+          @click.prevent.stop="deleteLike(restaurant.id)"
           type="button"
           class="btn btn-danger like mr-2"
         >
@@ -48,7 +48,7 @@
         </button>
         <button
           v-else
-          @click.prevent.stop="addLike"
+          @click.prevent.stop="addLike(restaurant.id)"
           type="button"
           class="btn btn-primary like mr-2"
         >
@@ -62,6 +62,8 @@
 <script>
 // 從mixins中載入emptyImageFilter
 import { emptyImageFilter } from '../utils/mixins'
+import usersAPI from '../apis/users'
+import { Toast } from '../utils/helpers'
 
 export default {
   mixins: [emptyImageFilter],
@@ -79,31 +81,97 @@ export default {
   },
   methods: {
     // 加入最愛函式
-    addFavorite() {
-      this.restaurant = {
-        ...this.restaurant,
-        isFavorited: true
+    async addFavorite(restaurantId) {
+      try {
+        // 將data解構賦值取出
+        const { data } = await usersAPI.addFavorite({ restaurantId })
+
+        // 當data的狀態不是success時，要產生錯誤訊息
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+
+        // 將餐廳isFavorited狀態轉成true
+        this.restaurant = {
+          ...this.restaurant,
+          isFavorited: true
+        }
+      } catch(error) {
+        // 將錯誤訊息顯示在dev tool中
+        console.log('error', error)
+
+        // 告知使用者無法加入最愛的訊息
+        Toast.fire({
+          icon: 'error',
+          title: '無法將餐廳加入最愛，請稍後再試'
+        })
       }
     },
     // 刪除最愛函式
-    deleteFavorite() {
-      this.restaurant = {
-        ...this.restaurant,
-        isFavorited: false
+    async deleteFavorite(restaurantId) {
+      try {
+        // 將data解構賦值取出
+        const { data } = await usersAPI.deleteFavorite({ restaurantId })
+
+        // 當data的狀態不是success時，要產生錯誤訊息
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+
+        // 將餐廳isFavorited狀態轉成false
+        this.restaurant = {
+          ...this.restaurant,
+          isFavorited: false
+        }
+      } catch(error) {
+        console.log('error', error)
+        // 告知使用者無法加入最愛的訊息
+        Toast.fire({
+          icon: 'error',
+          title: '無法將餐廳移除最愛，請稍後再試'
+        })
       }
     },
     // 按讚函式
-    addLike() {
-      this.restaurant = {
-        ...this.restaurant,
-        isLiked: true
+    async addLike(restaurantId) {
+      try {
+        const { data } = await usersAPI.addLike({ restaurantId })
+
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+
+        this.restaurant = {
+          ...this.restaurant,
+          isLiked: true
+        }
+      } catch(error) {
+        console.log('error', error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法將餐廳加入喜歡，請稍後再試'
+        })
       }
     },
     // 取消讚函式
-    deleteLike() {
-      this.restaurant = {
-        ...this.restaurant,
-        isLiked: false
+     async deleteLike(restaurantId) {
+      try {
+        const { data } = await usersAPI.deleteLike({ restaurantId })
+
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+
+        this.restaurant = {
+          ...this.restaurant,
+          isLiked: false
+        }
+      } catch(error) {
+        console.log('error', error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法將餐廳移除喜歡，請稍後再試'
+        })
       }
     }
   }
