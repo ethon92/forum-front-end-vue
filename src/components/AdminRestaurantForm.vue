@@ -148,6 +148,17 @@ export default {
   created () {
     this.fetchCategories()
   },
+  watch: {
+    // 監控當餐廳資料從AdminRestaurantEdit取回之後，再放入表單中
+    // 避免還未取得資料的時候，就已經渲染完表單
+    initialRestaurant(newValue) {
+      this.restaurant = {
+        ...this.restaurant,
+        ...newValue
+      }
+      // this.restaurant = this.initialRestaurant
+    }
+  },
   methods: {
     // 向伺服器取得餐廳類別的函式
     async fetchCategories () {
@@ -206,6 +217,11 @@ export default {
       const formData = new FormData(form)
       // 利用emit將after-submit事件傳遞至父元件
       this.$emit('after-submit', formData)
+    },
+    findCategoryName() {
+      this.categories.filter( category => {
+        category.id === this.restaurant.categoryId
+      })
     }
   }
 }

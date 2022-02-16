@@ -1,33 +1,13 @@
 <template>
   <div class="container py-5">
-    <AdminRestaurantForm :initial-restaurant="restaurant" @after-submit="handleAfterSubmit" />
+    <AdminRestaurantForm :initial-restaurant="restaurant" @after-submit="handleAfterSubmit" :is-processing="isProcessing"/>
   </div>
 </template>
 
 <script>
 import AdminRestaurantForm from '../components/AdminRestaurantForm.vue'
-
-const dummyData = {
-    "restaurant": {
-        "id": 2,
-        "name": "Major Bechtelar",
-        "tel": "1-966-146-5470 x92471",
-        "address": "746 Scot Drive",
-        "opening_hours": "08:00",
-        "description": "odio",
-        "image": "https://loremflickr.com/320/240/restaurant,food/?random=32.49389388411667",
-        "viewCounts": 0,
-        "createdAt": "2022-01-23T10:09:30.000Z",
-        "updatedAt": "2022-01-23T10:09:30.000Z",
-        "CategoryId": 4,
-        "Category": {
-            "id": 4,
-            "name": "墨西哥料理",
-            "createdAt": "2022-01-23T10:09:30.000Z",
-            "updatedAt": "2022-01-23T10:09:30.000Z"
-        }
-    }
-}
+import adminAPI from '../apis/admin'
+import { Toast } from '../utils/helpers'
 
 export default {
   name: 'AdminRestaurantEdit',
@@ -45,34 +25,75 @@ export default {
         description: '',
         image: '',
         openingHours: ''
-      }
+      },
+      isProcessing: false
     }
   },
   created() {
     const { id } = this.$route.params
     this.fetchRestaurant(id)
   },
+  beforeRouteUpdate (to, next) {
+    // 路由改變時重新抓取資料
+    const { id } = to.params
+    this.fetchRestaurant(id)
+    next()
+  },
   methods: {
-    fetchRestaurant(restaurantId) {
-      console.log('fetchRestaurant id:', restaurantId)
-      const { restaurant } = dummyData
-      const { id, name, CategoryId: categoryId, tel, address, description, image, opening_hours:openingHours } = restaurant
-      this.restaurant = {
-        ...this.restaurant,
-        id,
-        name,
-        categoryId,
-        tel,
-        address,
-        description,
-        image,
-        openingHours
+    // 拉取餐廳詳細資料的函式
+    async fetchRestaurant(restaurantId) {
+      try {
+        const { data } = await adminAPI.restaurants.getDetail({ restaurantId })
+
+        // 將拉取資料解構賦值取出
+        const { 
+          id, 
+          name, 
+          CategoryId: categoryId, 
+          tel, address, 
+          description, 
+          image, 
+          opening_hours:openingHours 
+        } = data.restaurant
+
+        // 將餐廳詳細資料放入vue的restaurant中
+        this.restaurant = {
+          ...this.restaurant,
+          id,
+          name,
+          categoryId,
+          tel,
+          address,
+          description,
+          image,
+          openingHours
+        }
+
+      } catch(error) {
+        console.log('error', error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法取得餐廳資料，請稍後再試'
+        })
       }
     },
-    handleAfterSubmit (formData) {
-      // TODO: 透過 API 將表單資料送到伺服器
-      for (let [name, value] of formData.entries()) {
-        console.log(name + ': ' + value)
+    async handleAfterSubmit (formData) {
+      try {
+        this.isProcessing = true
+        const { data } = await adminAPI.restaurants.update({ restaurantId: this.restaurant.id, formData })
+
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+
+        this.$router.push({ name: 'admin-restaurants' })
+      } catch(error) {
+        console.log('error', error)
+        this.isProcessing = true
+        Toast.fire({
+          icon: 'error',
+          title: '無法更新餐廳資料，請稍後再試'
+        })
       }
     }
   }
