@@ -87,6 +87,9 @@
 </template>
 
 <script>
+import authorizationAPI from '../apis/authorization'
+import { Toast } from '../utils/helpers'
+
 export default {
   data() {
     return {
@@ -97,15 +100,61 @@ export default {
     }
   },
   methods: {
-    handleSubmit() {
-      const data = JSON.stringify({
-        name: this.name,
-        email: this.email,
-        password: this.password,
-        passwordCheck: this.passwordCheck
-      })
+    async handleSubmit() {
+      try {
+        // 當未填姓名/email/密碼/確定密碼時，無法註冊
+        // 並且顯示提示訊息
+        if (
+          !this.name ||
+          !this.email ||
+          !this.password ||
+          !this.passwordCheck
+        ) {
+          Toast.fire({
+            icon: 'warning',
+            title: '請確認已填寫所有欄位'
+          })
+          return
+        }
 
-      console.log('data', data)
+        // 當兩次密碼不相同時，顯示提示訊息
+        if (this.password !== this.passwordCheck) {
+          Toast.fire({
+            icon: 'warning',
+            title: '兩次輸入的密碼不同'
+          })
+          this.passwordCheck = ''
+          return
+        }
+
+        // 向signUp的API註冊帳號
+        const { data } = await authorizationAPI.signUp({
+          name: this.name,
+          email: this.email,
+          password: this.password,
+          passwordCheck: this.passwordCheck
+        })
+
+        // 當回傳的狀態是error時，顯示錯誤訊息
+        if (data.status === 'error') {
+          throw new Error(data.message)
+        }
+
+        // 顯示註冊成功時的訊息
+        Toast.fire({
+          icon: 'success',
+          title: '註冊成功'
+        })
+
+        // 將網址轉址到登入頁面
+        this.$router.push({ name: 'sign-in'})
+      } catch(error) {
+        console.log('error', error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法註冊，請稍後再試'
+        })
+      }
     }
   }
 }

@@ -89,7 +89,7 @@ export default {
         this.isProcessing = true
 
         // 呼叫signin函式向後端API發送驗證使用者請求
-        const response = await authorizationAPI.signin({
+        const response = await authorizationAPI.signIn({
           email: this.email,
           password: this.password
         })
