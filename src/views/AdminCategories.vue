@@ -108,8 +108,6 @@
 <script>
 // 載入AdminNav component
 import AdminNav from '../components/AdminNav'
-// 載入uuid
-// import {v4 as uuidv4} from 'uuid'
 import adminAPI from '../apis/admin'
 import { Toast } from '../utils/helpers'
 
