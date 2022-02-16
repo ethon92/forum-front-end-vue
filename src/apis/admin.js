@@ -11,6 +11,24 @@ export default {
       return apiHelper.get('/admin/categories', {
         headers: { Authorization: `Bearer ${getToken()}` }
       })
+    },
+    // 新增餐廳類別的函式
+    create(categoryData) {
+      return apiHelper.post('/admin/categories', categoryData, {
+        headers: { Authorization: `Bearer ${getToken()}` }
+      })
+    },
+    // 移除餐廳類別的函式
+    delete(categoryId) {
+      return apiHelper.delete(`/admin/categories/${categoryId}`, {
+        headers: { Authorization: `Bearer ${getToken()}` }
+      })
+    },
+    // 修改餐廳類別的函式
+    update({ categoryId, name }) {
+      return apiHelper.put(`/admin/categories/${categoryId}`, { name }, {
+        headers: { Authorization: `Bearer ${getToken()}` }
+      })
     }
   },
   // 與restaurants相關的函式
