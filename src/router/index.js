@@ -81,7 +81,7 @@ const routes = [
   // 建立admin的路由
   {
     path: '/admin/restaurants',
-    name: 'admin',
+    name: 'admin-restaurants',
     component: () => import('../views/AdminRestaurants.vue')
   },
   // 建立admin餐廳類別的路由
