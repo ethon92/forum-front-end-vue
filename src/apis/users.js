@@ -17,6 +17,12 @@ export default {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
   },
+  // 更新使用者資料的函式
+  update({ userId, formData }) {
+    return apiHelper.put(`/users/${userId}`, formData, {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    })
+  },
   addFavorite({ restaurantId }) {
     // 因為使用POST時，通常會要將資料傳送至伺服器，所以連接在網址後方第一個參數會是data(要上傳的資料)
     // data之後才會是config
