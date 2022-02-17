@@ -54,45 +54,13 @@
 </template>
 
 <script>
-  // 模擬API的資料
-  const dummyUser = {
-    currentUser: {
-      id: 1,
-      name: '管理者',
-      email: 'root@example.com',
-      image: 'https://i.pravatar.cc/300',
-      isAdmin: true
-    },
-    isAuthenticated: true
-  }
+  // 載入mapState
+  import { mapState } from 'vuex'
 
   export default {
-    // 以下為預設值並回傳使用者的資料
-    data() {
-      return {
-        currentUser: {
-          id: -1,
-          name: '',
-          email: '',
-          image: '',
-          isAdmin: false
-        },
-        isAuthenticated: false
-      }
-    },
-    // 向API抓取的資料
-    created() {
-      this.fetchUser()
-    },
-    methods: {
-      // 抓取資料的方法並將模擬資料代入
-      fetchUser() {
-        this.currentUser = {
-          ...this.currentUser,
-          ...dummyUser.currentUser
-        }
-        this.isAuthenticated = dummyUser.isAuthenticated
-      }
+    // 利用computed/mapState取出currentUser/isAuthenticated
+    computed: {
+      ...mapState(['currentUser', 'isAuthenticated'])
     }
   }
 </script>

@@ -95,11 +95,15 @@ export default {
         })
 
         const { data } = response
-
+        console.log(data)
         // 當狀態不是success時，要丟出錯誤
         if( data.status !== 'success') {
           throw new Error(data.message)
         }
+
+        // 利用vuex mutations中的setCurrentUser方法
+        // 將登入的使用者資料放入vuex state中的currentUser
+        this.$store.commit('setCurrentUser', data.user)
 
         // 如果驗證成功，將token儲存至localStorage中
         localStorage.setItem('token', data.token)
