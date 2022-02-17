@@ -18,6 +18,7 @@
       <button
         type="submit"
         class="btn btn-primary mr-0"
+        :disabled="isProcessing"
       >
         Submit
       </button>
@@ -26,10 +27,11 @@
 </template>
 
 <script>
-// 引入uuid製造原本從API取得的commentId
-import { v4 as uuidv4 } from "uuid"
+import commentsAPI from '../apis/comments'
+import { Toast } from '../utils/helpers'
 
 export default {
+  name: 'createComment',
   props: {
     restaurantId: {
       type: Number,
@@ -38,24 +40,54 @@ export default {
   },
   data() {
     return {
-      text: "",
+      text: '',
+      isProcessing: false
     }
   },
   methods: {
-    handleSubmit() {
-      // 當使用者未輸入以及輸入空白時無法新增comment
-      if (!this.text.trim()) return
-      // TODO: 向API傳遞新增comment的資料
+    // 新增評論的函式
+    async handleSubmit() {
+      try {
+         // 當使用者未輸入以及輸入空白時無法新增comment
+        if (!this.text.trim()) {
+          Toast.fire({
+            icon: 'warning',
+            title: '您尚未填寫任何評論'
+          })
+          return
+        }
 
-      // API新增comment成功之後，將commentID/restaurantId/text傳遞到父元件
-      this.$emit('after-create-comment', {
-        commentId: uuidv4(), // 由於尚未串接API，所以使用uuid
-        restaurantId: this.restaurantId,
-        text: this.text
-      })
+        // 當進入傳送評論資料時，將submit按鈕disabled
+        this.isProcessing = true
 
-      // 將表單內容清空
-      this.text = ''
+        // 透過API新增評論的函式
+        const { data } = await commentsAPI.create({
+          restaurantId: this.restaurantId,
+          text: this.text
+        })
+        
+        // API新增comment成功之後，將commentID/restaurantId/text傳遞到父元件
+        this.$emit('after-create-comment', {
+          commentId: data.commentId,
+          restaurantId: this.restaurantId,
+          text: this.text
+        })
+
+        // 傳送成功之後，將submit按鈕解除disabled
+        this.isProcessing = false
+
+        // 將表單內容清空
+        this.text = ''
+      } catch(error) {
+        console.log('error', error)
+
+        // 傳送失敗時，將submit按鈕解除disabled
+        this.isProcessing = false
+        Toast.fire({
+          icon: 'error',
+          title: '無法新增評論，請稍後再試'
+        })
+      }
     }
   }
 }

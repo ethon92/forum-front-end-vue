@@ -95,7 +95,7 @@ export default {
         })
 
         const { data } = response
-        console.log(data)
+        
         // 當狀態不是success時，要丟出錯誤
         if( data.status !== 'success') {
           throw new Error(data.message)

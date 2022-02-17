@@ -25,83 +25,8 @@
 </template>
 
 <script>
-const dummyData = {
-    "restaurant": {
-        "id": 1,
-        "name": "Woodrow Schneider",
-        "tel": "1-333-791-8634 x99461",
-        "address": "2125 Tyrese Unions",
-        "opening_hours": "08:00",
-        "description": "Aspernatur labore ducimus et corporis quaerat rerum repellendus vitae. Id tempore veniam nemo eius. Repellendus minus debitis laboriosam repellat. Ea ipsam quod ducimus autem.",
-        "image": "https://loremflickr.com/320/240/restaurant,food/?random=23.008334423548217",
-        "viewCounts": 1,
-        "createdAt": "2022-01-23T10:09:30.000Z",
-        "updatedAt": "2022-01-27T04:56:13.000Z",
-        "CategoryId": 1,
-        "Category": {
-            "id": 1,
-            "name": "中式料理",
-            "createdAt": "2022-01-23T10:09:30.000Z",
-            "updatedAt": "2022-01-23T10:09:30.000Z"
-        },
-        "Comments": [
-            {
-                "id": 101,
-                "text": "Est esse ut aut.",
-                "UserId": 2,
-                "RestaurantId": 1,
-                "createdAt": "2022-01-23T10:09:30.000Z",
-                "updatedAt": "2022-01-23T10:09:30.000Z",
-                "User": {
-                    "id": 2,
-                    "name": "user1",
-                    "email": "user1@example.com",
-                    "password": "$2a$10$qjW2eJJ5XZSlDB7NCbjur.m6/vbT3SSPoc8L837FpwuswCMcHiTBS",
-                    "isAdmin": false,
-                    "image": null,
-                    "createdAt": "2022-01-23T10:09:30.000Z",
-                    "updatedAt": "2022-01-23T10:09:30.000Z"
-                }
-            },
-            {
-                "id": 1,
-                "text": "Facere reiciendis commodi eligendi.",
-                "UserId": 3,
-                "RestaurantId": 1,
-                "createdAt": "2022-01-23T10:09:30.000Z",
-                "updatedAt": "2022-01-23T10:09:30.000Z",
-                "User": {
-                    "id": 3,
-                    "name": "user2",
-                    "email": "user2@example.com",
-                    "password": "$2a$10$sUV3bR9SnXW8KIPpMVFQG.cwCvmS.HJ/Pf//MHGl7RDh2tVgby3tW",
-                    "isAdmin": false,
-                    "image": null,
-                    "createdAt": "2022-01-23T10:09:30.000Z",
-                    "updatedAt": "2022-01-23T10:09:30.000Z"
-                }
-            },
-            {
-                "id": 51,
-                "text": "Possimus nesciunt quo est consequuntur.",
-                "UserId": 3,
-                "RestaurantId": 1,
-                "createdAt": "2022-01-23T10:09:30.000Z",
-                "updatedAt": "2022-01-23T10:09:30.000Z",
-                "User": {
-                    "id": 3,
-                    "name": "user2",
-                    "email": "user2@example.com",
-                    "password": "$2a$10$sUV3bR9SnXW8KIPpMVFQG.cwCvmS.HJ/Pf//MHGl7RDh2tVgby3tW",
-                    "isAdmin": false,
-                    "image": null,
-                    "createdAt": "2022-01-23T10:09:30.000Z",
-                    "updatedAt": "2022-01-23T10:09:30.000Z"
-                }
-            }
-        ]
-    }
-}
+import restaurantAPI from '../apis/restaurants'
+import { Toast } from '../utils/helpers'
 
 export default {
   data() {
@@ -116,21 +41,34 @@ export default {
     }
   },
   created() {
-    this.fetchDashboardData()
+    // 利用route.params將路由中的id取出
+    const { id: restaurantId } = this.$route.params
+    this.fetchDashboardData(restaurantId)
   },
   methods: {
-    fetchDashboardData() {
-      // TODO: 向API索取restaurant dashboard資料
+    // 向伺服器取得餐廳資料的函式
+    async fetchDashboardData(restaurantId) {
+      try {
+        // 透過API取得餐廳資料的函式
+        const { data } = await restaurantAPI.getRestaurant({ restaurantId })
 
-      const { restaurant } = dummyData
-      const { id, name, Category, Comments, viewCounts } = restaurant
+        // 將data解構賦值取出
+        const { restaurant } = data
+        const { id, name, Category, Comments, viewCounts } = restaurant
 
-      this.restaurant = {
-        id,
-        name,
-        categoryName: Category.name,
-        commentsLength: Comments.length,
-        viewCounts
+        this.restaurant = {
+          id,
+          name,
+          categoryName: Category.name,
+          commentsLength: Comments.length,
+          viewCounts
+        }
+      } catch(error) {
+        console.log('error', error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法取得餐廳資料，請稍後再試'
+        })
       }
     }
   }

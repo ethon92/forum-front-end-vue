@@ -5,6 +5,12 @@ import { apiHelper } from "../utils/helpers";
 const getToken = () => localStorage.getItem('token')
 
 export default {
+  // 取得特定id的餐廳資料函式
+  getRestaurant({ restaurantId }) {
+    return apiHelper.get(`/restaurants/${restaurantId}`, {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    })
+  },
   // 向伺服器取得餐廳資料的函式
   getRestaurants({ page, categoryId }) {
     // 利用URLSearchParams建構子，建立出page跟categoryId的queryString
