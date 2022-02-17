@@ -51,15 +51,27 @@ export default {
         headers: { Authorization: `Bearer ${getToken()}` }
       })
     },
+    // 更新餐廳資料的函式
+    update({ restaurantId, formData }) {
+      return apiHelper.put(`/admin/restaurants/${restaurantId}`, formData, {
+        headers: { Authorization: `Bearer ${getToken()}` }
+      })
+    },
     // 移除餐廳的函式
     delete({ restaurantId }) {
       return apiHelper.delete(`/admin/restaurants/${restaurantId}`, {
         headers: { Authorization: `Bearer ${getToken()}` }
       })
     },
-    // 更新餐廳資料的函式
-    update({ restaurantId, formData }) {
-      return apiHelper.put(`/admin/restaurants/${restaurantId}`, formData, {
+  },
+  users: {
+    get() {
+      return apiHelper.get('/admin/users', {
+        headers: { Authorization: `Bearer ${getToken()}` }
+      })
+    },
+    update({ userId, isAdmin }) {
+      return apiHelper.put(`/admin/users/${userId}`, { isAdmin }, {
         headers: { Authorization: `Bearer ${getToken()}` }
       })
     }

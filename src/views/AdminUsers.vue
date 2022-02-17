@@ -35,7 +35,7 @@
             <button
               v-if="user.isAdmin"
               v-show="user.id !== currentUser.id"
-              @click.prevent.stop="toggleUserRole(user.id)"
+              @click.prevent.stop="toggleUserRole(user.id, user.isAdmin)"
               type="button"
               class="btn btn-link"
             >
@@ -43,7 +43,7 @@
             </button>
             <button
               v-else
-              @click.prevent.stop="toggleUserRole(user.id)"
+              @click.prevent.stop="toggleUserRole(user.id, user.isAdmin)"
               type="button"
               class="btn btn-link"
             >
@@ -58,52 +58,9 @@
 
 <script>
 import AdminNav from "../components/AdminNav.vue";
-
-const dummyData = {
-    "users": [
-        {
-            "id": 1,
-            "name": "root",
-            "email": "root@example.com",
-            "password": "$2a$10$JQvqoUJFVaBalCiinUSTs.2J36IkrUcLdwIopXkGtpPDCp51HM4/G",
-            "isAdmin": true,
-            "image": null,
-            "createdAt": "2022-01-23T10:09:29.000Z",
-            "updatedAt": "2022-01-23T10:09:29.000Z"
-        },
-        {
-            "id": 2,
-            "name": "user1",
-            "email": "user1@example.com",
-            "password": "$2a$10$qjW2eJJ5XZSlDB7NCbjur.m6/vbT3SSPoc8L837FpwuswCMcHiTBS",
-            "isAdmin": false,
-            "image": null,
-            "createdAt": "2022-01-23T10:09:30.000Z",
-            "updatedAt": "2022-01-23T10:09:30.000Z"
-        },
-        {
-            "id": 3,
-            "name": "user2",
-            "email": "user2@example.com",
-            "password": "$2a$10$sUV3bR9SnXW8KIPpMVFQG.cwCvmS.HJ/Pf//MHGl7RDh2tVgby3tW",
-            "isAdmin": false,
-            "image": null,
-            "createdAt": "2022-01-23T10:09:30.000Z",
-            "updatedAt": "2022-01-23T10:09:30.000Z"
-        }
-    ]
-}
-
-const dummyUser = {
-  currentUser: {
-      id: 1,
-      name: '管理者',
-      email: 'root@example.com',
-      image: 'https://i.pravatar.cc/300',
-      isAdmin: true
-    },
-    isAuthenticated: true
-}
+import adminAPI from '../apis/admin'
+import { Toast } from '../utils/helpers'
+import { mapState } from 'vuex'
 
 export default {
   name: 'AdminUsers',
@@ -113,29 +70,39 @@ export default {
   data() {
     return {
       users: [],
-      currentUser: {
-          id: -1,
-          name: '',
-          email: '',
-          image: '',
-          isAdmin: false
-        },
-        isAuthenticated: false
     }
   },
   created() {
     this.fetchUsers()
   },
+  computed: {
+    ...mapState(['currentUser'])
+  },
   methods: {
-    fetchUsers() {
-      // TODO: 向API抓取users的資料
-
-      this.users = dummyData.users
-      this.currentUser = dummyUser.currentUser
-      this.isAuthenticated = dummyUser.isAuthenticated
+    // 向伺服器抓取所有使用者的函式
+    async fetchUsers() {
+      try {
+        const { data } = await adminAPI.users.get()
+        this.users = data.users
+      } catch(error) {
+        console.log('error', error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法取得所有使用者，請稍後再試'
+        })
+      }
     },
-    toggleUserRole(userId) {
-      this.users = this.users.map( user => {
+    // 向伺服器改變使用者權限的函式
+    async toggleUserRole(userId, isAdmin) {
+      try {
+        // 透過API改變使用者權限的函式
+        const { data } = await adminAPI.users.update({ userId, isAdmin: (!isAdmin).toString()})
+
+        if (data.status === 'error') {
+          throw new Error(data.message)
+        }
+
+        this.users = this.users.map( user => {
         if (user.id === userId) {
           return {
             ...user,
@@ -145,6 +112,14 @@ export default {
 
         return user
       })
+
+      } catch(error) {
+        console.log('error', error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法更新使用者權限，請稍後再試'
+        })
+      }
     }
   }
 }
