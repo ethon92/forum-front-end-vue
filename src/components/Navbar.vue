@@ -44,6 +44,7 @@
         <button
           type="button" 
           class="btn btn-sm btn-outline-success my-2 my-sm-0"
+          @click="logout"
           >
           登出
           </button>
@@ -61,6 +62,16 @@
     // 利用computed/mapState取出currentUser/isAuthenticated
     computed: {
       ...mapState(['currentUser', 'isAuthenticated'])
+    },
+    methods: {
+      // 登出的函式
+      logout() {
+        // 呼叫store中的revokeAuthentication函式
+        this.$store.commit('revokeAuthentication')
+
+        // 轉址到登入頁面
+        this.$router.push('/signin')
+      }
     }
   }
 </script>

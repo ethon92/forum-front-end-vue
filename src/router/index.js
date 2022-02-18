@@ -7,6 +7,20 @@ import store from '../store'
 
 Vue.use(VueRouter)
 
+// 當使用者沒有管理權限時會轉址到not-found頁面
+const authorizeIsAdmin = (to, from, next) => {
+  // 從store state取出currentUser
+  const currentUser = store.state.currentUser
+  
+  // 當不是admin時轉址
+  if (currentUser && !currentUser.isAdmin) {
+    next('/404')
+    return
+  }
+
+  next()
+}
+
 const routes = [
   // 設定根目錄的路由是導向'/restaurants'
   {
@@ -83,36 +97,42 @@ const routes = [
   {
     path: '/admin/restaurants',
     name: 'admin-restaurants',
-    component: () => import('../views/AdminRestaurants.vue')
+    component: () => import('../views/AdminRestaurants.vue'),
+    beforeEnter: authorizeIsAdmin
   },
   // 建立admin餐廳類別的路由
   {
     path: '/admin/categories',
     name: 'admin-categories',
-    component: () => import('../views/AdminCategories.vue')
+    component: () => import('../views/AdminCategories.vue'),
+    beforeEnter: authorizeIsAdmin
   },
   {
     path: '/admin/users',
     name: 'admin-users',
-    component: () => import('../views/AdminUsers.vue')
+    component: () => import('../views/AdminUsers.vue'),
+    beforeEnter: authorizeIsAdmin
   },
   // 建立admin新增餐廳的路由
   {
     path: '/admin/restaurants/new',
     name: 'admin-restaurant-new',
-    component: () => import('../views/AdminRestaurantNew.vue')
+    component: () => import('../views/AdminRestaurantNew.vue'),
+    beforeEnter: authorizeIsAdmin
   },
   // 建立admin修改餐廳的路由
   {
     path: '/admin/restaurants/:id/edit',
     name: 'admin-restaurant-edit',
-    component: () => import('../views/AdminRestaurantEdit.vue')
+    component: () => import('../views/AdminRestaurantEdit.vue'),
+    beforeEnter: authorizeIsAdmin
   },
   // 建立admin各個restaurant的路由
   {
     path: '/admin/restaurants/:id',
     name: 'admin-restaurant',
-    component: () => import('../views/AdminRestaurant.vue')
+    component: () => import('../views/AdminRestaurant.vue'),
+    beforeEnter: authorizeIsAdmin
   },
   // 由於路由是由上往下匹配，所以只要上方都匹配不到路由就會進到not-found
   // 則將not-found路由放在最後一個，並且path是放入"*"(萬用字元)
@@ -128,8 +148,36 @@ const router = new VueRouter({
   routes
 })
 
-router.beforeEach((to, from, next) => {
-  store.dispatch('fetchCurrentUser')
+// 利用beforeEach當網址有改變時執行的函式
+router.beforeEach( async (to, from, next) => {
+  // 取出localStorage中的token
+  const tokenInLocalStorage = localStorage.getItem('token')
+  // 取出store state中的token
+  const tokenInStore = store.state.token
+  // 取出store state中的isAuthenticated
+  let isAuthenticated = store.state.isAuthenticated
+
+  // 當state中的token與localStorage中的token不同時，才進行驗證
+  // 進而減少向伺服器發送驗證的請求
+  if (tokenInLocalStorage && tokenInLocalStorage !== tokenInStore) {
+    isAuthenticated = await store.dispatch('fetchCurrentUser')
+  }
+  
+  // 不需要驗證 token 的頁面
+  const pathsWithoutAuthentication = ['sign-up', 'sign-in']
+
+  // 如果 token 無效且進入需要驗證的頁面則轉址到登入頁
+  if (!isAuthenticated && !pathsWithoutAuthentication.includes(to.name)) {
+    next('/signin')
+    return
+  }
+
+  // 如果 token 有效且進入不需要驗證到頁面則轉址到餐廳首頁
+  if (isAuthenticated && pathsWithoutAuthentication.includes(to.name)) {
+    next('/restaurants')
+    return
+  }
+
   next()
 })
 
