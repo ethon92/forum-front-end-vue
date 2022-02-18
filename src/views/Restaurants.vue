@@ -13,6 +13,10 @@
 
       <!-- 分頁標籤 RestaurantPagination -->
       <RestaurantsPagination v-if="totalPage.length > 1" :category-id="categoryId" :current-page="currentPage" :total-page="totalPage" :previous-page="previousPage" :next-page="nextPage"/>
+
+        <div v-if=" restaurants.length < 1 ">
+          此類別目前沒有餐廳  
+        </div>
     </template>
   </div>
 </template>
