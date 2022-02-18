@@ -1,15 +1,10 @@
 // 載入apiHelper
 import { apiHelper } from "../utils/helpers";
 
-// 將token從localStorage中取出
-const getToken = () => localStorage.getItem('token')
-
 export default {
   // 取得特定id的餐廳資料函式
   getRestaurant({ restaurantId }) {
-    return apiHelper.get(`/restaurants/${restaurantId}`, {
-      headers: { Authorization: `Bearer ${getToken()}` }
-    })
+    return apiHelper.get(`/restaurants/${restaurantId}`)
   },
   // 向伺服器取得餐廳資料的函式
   getRestaurants({ page, categoryId }) {
@@ -17,19 +12,12 @@ export default {
     const searchParams = new URLSearchParams({ page, categoryId })
 
     // 回傳伺服器回傳結果
-    return apiHelper.get(`/restaurants?${searchParams.toString()}`, {
-      // 將token按照JWT規範以Bearer類別放在header屬性中
-      headers: { Authorization: `Bearer ${getToken()}` }
-    })
+    return apiHelper.get(`/restaurants?${searchParams.toString()}`)
   },
   getRestaurantFeeds() {
-    return apiHelper.get('/restaurants/feeds', {
-      headers: { Authorization: `Bearer ${getToken()}` }
-    })
+    return apiHelper.get('/restaurants/feeds')
   },
   getTopRestaurants() {
-    return apiHelper.get('/restaurants/top', {
-      headers: { Authorization: `Bearer ${getToken()}` }
-    })
+    return apiHelper.get('/restaurants/top')
   }
 }
