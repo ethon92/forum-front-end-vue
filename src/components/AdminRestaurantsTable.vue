@@ -1,68 +1,78 @@
 <template>
-  <table class="table">
-    <thead class="thead-dark">
-      <tr>
-        <th scope="col">
-          #
-        </th>
-        <th scope="col">
-          Category
-        </th>
-        <th scope="col">
-          Name
-        </th>
-        <th
-          scope="col"
-          width="300"
-        >
-          操作
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr
-        v-for="restaurant in restaurants"
-        :key="restaurant.id"
-      >
-        <th scope="row">
-          {{ restaurant.id }}
-        </th>
-        <td>{{ restaurant.Category ? restaurant.Category.name : '未分類' }}</td>
-        <td>{{ restaurant.name }}</td>
-        <td class="d-flex justify-content-between">
-          <router-link
-            :to="{ name: 'admin-restaurant', params: { id: restaurant.id }}"
-            class="btn btn-link"
-          >Show</router-link>
-
-          <router-link
-            :to="{ name: 'admin-restaurant-edit', params: { id: restaurant.id }}"
-            class="btn btn-link"
-          >Edit</router-link>
-
-          <button
-            type="button"
-            class="btn btn-link"
-            @click.prevent.stop="deleteRestaurants(restaurant.id)"
+  <div>
+    <Spinner v-if="isLoading"/>
+    <table v-else class="table">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">
+            #
+          </th>
+          <th scope="col">
+            Category
+          </th>
+          <th scope="col">
+            Name
+          </th>
+          <th
+            scope="col"
+            width="300"
           >
-            Delete
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+            操作
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="restaurant in restaurants"
+          :key="restaurant.id"
+        >
+          <th scope="row">
+            {{ restaurant.id }}
+          </th>
+          <td>{{ restaurant.Category ? restaurant.Category.name : '未分類' }}</td>
+          <td>{{ restaurant.name }}</td>
+          <td class="d-flex justify-content-between">
+            <router-link
+              :to="{ name: 'admin-restaurant', params: { id: restaurant.id }}"
+              class="btn btn-link"
+            >Show</router-link>
+
+            <router-link
+              :to="{ name: 'admin-restaurant-edit', params: { id: restaurant.id }}"
+              class="btn btn-link"
+            >Edit</router-link>
+
+            <button
+              type="button"
+              class="btn btn-link"
+              @click.prevent.stop="deleteRestaurants(restaurant.id)"
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
 </template>
 
 <script>
 import adminAPI from '../apis/admin'
 import { Toast } from '../utils/helpers'
+import Spinner from '../components/Spinner.vue'
 
 export default {
+  components: { Spinner },
   name: 'AdminRestaurantsTable',
+  comments: {
+    Spinner
+  },
   data() {
     return {
       // 建立餐廳初始資料
-      restaurants: []
+      restaurants: [],
+      isLoading: true
     }
   },
   created() {
@@ -75,8 +85,10 @@ export default {
         const { data } = await adminAPI.restaurants.get()
 
         this.restaurants = data.restaurants
+        this.isLoading = false
       } catch(error) {
         console.log('error', error)
+        this.isLoading = false
         Toast.fire({
           icon: 'error',
           title: '無法取得後台餐廳列表，請稍後再試'

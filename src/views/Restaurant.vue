@@ -1,16 +1,19 @@
 <template>
   <div class="container py-5">
-    <h1>餐廳描述頁</h1>
+    <Spinner v-if="isLoading" />
+    <template v-else>
+      <h1>餐廳描述頁</h1>
 
-    <!-- 餐廳資訊頁 RestaurantDetail -->
-    <RestaurantDetail :initial-restaurant="restaurant"/>
-    <hr>
+      <!-- 餐廳資訊頁 RestaurantDetail -->
+      <RestaurantDetail :initial-restaurant="restaurant"/>
+      <hr>
 
-    <!-- 餐廳評論 RestaurantComments -->
-    <RestaurantComments :restaurant-comments="restaurantComments" @after-delete-comment="afterDeleteComment" />
+      <!-- 餐廳評論 RestaurantComments -->
+      <RestaurantComments :restaurant-comments="restaurantComments" @after-delete-comment="afterDeleteComment" />
 
-    <!-- 新增評論 CreateComment -->
-    <CreateComment :restaurant-id="restaurant.id" @after-create-comment="afterCreateComment" />
+      <!-- 新增評論 CreateComment -->
+      <CreateComment :restaurant-id="restaurant.id" @after-create-comment="afterCreateComment" />
+    </template>
   </div>
 </template>
 
@@ -21,13 +24,15 @@ import CreateComment from '../components/CreateComment.vue'
 import restaurantAPI from '../apis/restaurants'
 import { Toast } from '../utils/helpers'
 import { mapState } from 'vuex'
+import Spinner from './../components/Spinner.vue'
 
 export default {
   name: "Restaurant",
   components: {
     RestaurantDetail,
     RestaurantComments,
-    CreateComment
+    CreateComment,
+    Spinner
   },
   // 建立restaurant資料
   data() {
@@ -45,6 +50,7 @@ export default {
         isLiked: false
       },
       restaurantComments: [],
+      isLoading: true
     }
   },
   created() {
@@ -63,6 +69,7 @@ export default {
     // 向伺服器索取餐廳詳細資料的函式
     async fetchRestaurant(restaurantId) {
       try {
+        this.isLoading = true
         // 透過API取得餐廳詳細資料的函式
         const { data } = await restaurantAPI.getRestaurant({ restaurantId })
 
@@ -84,7 +91,9 @@ export default {
         }
 
         this.restaurantComments = Comments
+        this.isLoading = false
       } catch(error) {
+        this.isLoading = false
         console.log('error', error)
         Toast.fire({
           icon: 'error',

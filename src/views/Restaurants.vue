@@ -4,14 +4,16 @@
 
     <!-- 餐廳類別標籤 RestaurantsNavPills -->
     <RestaurantsNavPills :categories="categories"/>
+    <Spinner v-if="isLoading" />
+    <template v-else>
+      <div class="row">
+        <!-- 餐廳卡片 RestaurantCard-->
+        <RestaurantCard v-for="restaurant in restaurants" :key="restaurant.id" :initial-restaurant="restaurant"/>
+      </div>
 
-    <div class="row">
-      <!-- 餐廳卡片 RestaurantCard-->
-      <RestaurantCard v-for="restaurant in restaurants" :key="restaurant.id" :initial-restaurant="restaurant"/>
-    </div>
-
-    <!-- 分頁標籤 RestaurantPagination -->
-    <RestaurantsPagination v-if="totalPage.length > 1" :category-id="categoryId" :current-page="currentPage" :total-page="totalPage" :previous-page="previousPage" :next-page="nextPage"/>
+      <!-- 分頁標籤 RestaurantPagination -->
+      <RestaurantsPagination v-if="totalPage.length > 1" :category-id="categoryId" :current-page="currentPage" :total-page="totalPage" :previous-page="previousPage" :next-page="nextPage"/>
+    </template>
   </div>
 </template>
 
@@ -28,6 +30,7 @@ import RestaurantsPagination from '../components/RestaurantsPagination.vue'
 import restaurantsAPI from '../apis/restaurants'
 // 載入Toast
 import { Toast } from '../utils/helpers'
+import Spinner from './../components/Spinner'
 
 export default {
   name: 'Restaurants',
@@ -36,6 +39,7 @@ export default {
     RestaurantCard,
     RestaurantsNavPills,
     RestaurantsPagination,
+    Spinner
   },
   // 設定初始資料
   data() {
@@ -44,9 +48,10 @@ export default {
       categories: [],
       categoryId: -1,
       currentPage: 1,
-      totalPage: [],
+      totalPage: 0,
       previousPage: -1,
-      nextPage: -1
+      nextPage: -1,
+      isLoading: true
     }
   },
   created() {
@@ -67,6 +72,7 @@ export default {
     // 向伺服器索取資料的函式
     async fetchRestaurants({ queryPage, queryCategoryId }) {
       try {
+        this.isLoading = true
         // 向伺服器取得餐廳資料的函式
         const response = await restaurantsAPI.getRestaurants({
           page: queryPage,
@@ -84,8 +90,9 @@ export default {
         this.totalPage = totalPage
         this.previousPage = prev
         this.nextPage = next
-
+        this.isLoading = false
       } catch(error) {
+        this.isLoading = false
         // 利用Toast顯示錯誤訊息
         Toast.fire({
           icon: 'error',

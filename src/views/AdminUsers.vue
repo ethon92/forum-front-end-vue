@@ -2,7 +2,7 @@
   <div class="container py-5">
     <!-- AdminNav Component -->
     <AdminNav />
-
+    <Spinner v-if="isLoading" />
     <table class="table">
       <thead class="thead-dark">
         <tr>
@@ -61,15 +61,18 @@ import AdminNav from "../components/AdminNav.vue";
 import adminAPI from '../apis/admin'
 import { Toast } from '../utils/helpers'
 import { mapState } from 'vuex'
+import Spinner from './../components/Spinner'
 
 export default {
   name: 'AdminUsers',
   components: {
-    AdminNav
+    AdminNav,
+    Spinner
   },
   data() {
     return {
       users: [],
+      isLoading: true
     }
   },
   created() {
@@ -84,7 +87,9 @@ export default {
       try {
         const { data } = await adminAPI.users.get()
         this.users = data.users
+        this.isLoading = false
       } catch(error) {
+        this.isLoading = false
         console.log('error', error)
         Toast.fire({
           icon: 'error',
